@@ -3,6 +3,7 @@ from datetime import datetime, timezone
 
 from flask import Flask, jsonify, render_template, request
 from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy import inspect, text
 
 app = Flask(__name__)
 database_url = os.getenv("DATABASE_URL", "sqlite:///publicworks.db")
@@ -57,6 +58,23 @@ PARKS = [
 ]
 
 PARK_CONTEXTS = ["Grounds", "Trash"]
+
+
+def migrate():
+    inspector = inspect(db.engine)
+    if "rhythm" not in inspector.get_table_names():
+        return
+
+    columns = {column["name"] for column in inspector.get_columns("rhythm")}
+    if "domain" not in columns:
+        db.session.execute(text(
+            "ALTER TABLE rhythm ADD COLUMN domain VARCHAR(80) NOT NULL DEFAULT 'General'"
+        ))
+    if "context" not in columns:
+        db.session.execute(text(
+            "ALTER TABLE rhythm ADD COLUMN context VARCHAR(80) NOT NULL DEFAULT 'General'"
+        ))
+    db.session.commit()
 
 
 def seed():
@@ -141,6 +159,7 @@ def witness():
 
 with app.app_context():
     db.create_all()
+    migrate()
     seed()
 
 
