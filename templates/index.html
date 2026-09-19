@@ -17,13 +17,25 @@
   </main>
 
   <dialog id="panel">
-    <div class="panel-head"><div><p class="eyebrow">WITNESS</p><h2 id="panel-title"></h2><p id="panel-place" class="muted"></p></div><button class="close" aria-label="Close">×</button></div>
+    <div class="panel-head"><div><p class="eyebrow">WITNESS</p><h2 id="panel-title"></h2><p id="panel-place" class="muted"></p><button id="standard-open" class="standard-link" hidden>STANDARD</button></div><button class="close" aria-label="Close">×</button></div>
     <p class="question">What is the condition?</p>
     <div id="condition-step">
       <div class="condition-grid">
         <button data-condition="good" class="signal good"><span>●</span><strong>GOOD</strong></button>
         <button data-condition="watch" class="signal watch"><span>△</span><strong>WATCH</strong></button>
         <button data-condition="act" class="signal act"><span>■</span><strong>ACT</strong></button>
+      </div>
+    </div>
+    <div id="standard-step" hidden>
+      <button id="standard-back" class="back">← WITNESS</button>
+      <p class="eyebrow standard-eyebrow">GROUNDS STANDARD</p>
+      <div class="standard-copy">
+        <p><strong>GOOD</strong> — Grounds are within standard. Turf is serviceable, vegetation is stable, and no intervention is presently needed.</p>
+        <p><strong>WATCH</strong> — A condition is approaching a threshold or deserves another look: growth, moisture stress, ordinary weeds, bare ground, debris, or minor damage.</p>
+        <p><strong>ACT</strong> — Intervention is warranted now or should be routed into the work rhythm.</p>
+        <div class="standard-rule"><strong>MOWING</strong><span>Target roughly 3–3½ in. Avoid removing more than one-third of the grass blade at once.</span></div>
+        <div class="standard-rule"><strong>WEEDS</strong><span>Distinguish ordinary weeds from suspected noxious weeds. Identification comes before control; observation does not automatically mean chemical treatment.</span></div>
+        <div class="standard-rule"><strong>GROUND</strong><span>Notice dry or stressed turf, irrigation problems, bare soil, debris, damage, and conditions that may worsen if left unattended.</span></div>
       </div>
     </div>
     <div id="attention-step" hidden>
