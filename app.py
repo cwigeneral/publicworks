@@ -29,6 +29,7 @@ class Witness(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     rhythm_id = db.Column(db.Integer, db.ForeignKey("rhythm.id"), nullable=False)
     condition = db.Column(db.String(16), nullable=False)
+    attention = db.Column(db.String(40))
     created_at = db.Column(db.DateTime(timezone=True), nullable=False, default=lambda: datetime.now(timezone.utc))
     rhythm = db.relationship("Rhythm")
 
@@ -38,6 +39,7 @@ class Condition(db.Model):
     rhythm_id = db.Column(db.Integer, db.ForeignKey("rhythm.id"), nullable=False)
     state = db.Column(db.String(16), nullable=False)
     route = db.Column(db.String(24), nullable=False)
+    attention = db.Column(db.String(40))
     opened_at = db.Column(db.DateTime(timezone=True), nullable=False, default=lambda: datetime.now(timezone.utc))
     resolved_at = db.Column(db.DateTime(timezone=True))
     rhythm = db.relationship("Rhythm")
@@ -73,6 +75,18 @@ def migrate():
     if "context" not in columns:
         db.session.execute(text(
             "ALTER TABLE rhythm ADD COLUMN context VARCHAR(80) NOT NULL DEFAULT 'General'"
+        ))
+
+    witness_columns = {column["name"] for column in inspector.get_columns("witness")}
+    if "attention" not in witness_columns:
+        db.session.execute(text(
+            "ALTER TABLE witness ADD COLUMN attention VARCHAR(40)"
+        ))
+
+    condition_columns = {column["name"] for column in inspector.get_columns("condition")}
+    if "attention" not in condition_columns:
+        db.session.execute(text(
+            "ALTER TABLE condition ADD COLUMN attention VARCHAR(40)"
         ))
     db.session.commit()
 
@@ -126,6 +140,7 @@ def state():
             "place": c.rhythm.place,
             "state": c.state,
             "route": c.route,
+            "attention": c.attention,
         } for c in active],
     })
 
@@ -135,10 +150,14 @@ def witness():
     payload = request.get_json(force=True)
     rhythm = db.session.get(Rhythm, int(payload["rhythm_id"]))
     state = payload["condition"]
+    attention = payload.get("attention")
+    allowed_attention = {"mow", "weeds", "water", "clean", "damage", "other"}
     if not rhythm or state not in {"good", "watch", "act"}:
         return jsonify({"error": "invalid witness"}), 400
+    if attention and (rhythm.domain != "Parks" or rhythm.context != "Grounds" or state != "act" or attention not in allowed_attention):
+        return jsonify({"error": "invalid attention"}), 400
 
-    db.session.add(Witness(rhythm_id=rhythm.id, condition=state))
+    db.session.add(Witness(rhythm_id=rhythm.id, condition=state, attention=attention))
     active = Condition.query.filter_by(rhythm_id=rhythm.id, resolved_at=None).first()
 
     if state == "good":
@@ -150,8 +169,9 @@ def witness():
         if active:
             active.state = state
             active.route = route
+            active.attention = attention
         else:
-            db.session.add(Condition(rhythm_id=rhythm.id, state=state, route=route))
+            db.session.add(Condition(rhythm_id=rhythm.id, state=state, route=route, attention=attention))
 
     db.session.commit()
     return jsonify({"ok": True})
