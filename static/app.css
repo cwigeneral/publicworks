@@ -1,10 +1,148 @@
-:root{font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:#181818;background:#f1f0ea}*{box-sizing:border-box}body{margin:0}main{max-width:680px;margin:auto;padding:32px 18px 80px}header{margin-bottom:28px}.eyebrow{font-size:.72rem;font-weight:800;letter-spacing:.14em;margin:0 0 6px}.muted{color:#68675f;margin:.35rem 0}h1,h2{margin:0}h1{font-size:2.15rem;letter-spacing:-.04em}.stack{display:grid;gap:10px}.rhythm,.condition-card{width:100%;border:1px solid #d4d1c7;background:#fff;border-radius:14px;padding:18px;text-align:left;box-shadow:0 1px 0 rgba(0,0,0,.04)}button.rhythm{font:inherit;cursor:pointer}.rhythm-row{display:flex;align-items:center;justify-content:space-between;gap:16px}.rhythm strong{font-size:1.08rem}.status{font-size:1.35rem}.conditions{margin-top:38px}.section-title{display:flex;align-items:center;gap:9px;margin-bottom:12px}.section-title h2{font-size:1.15rem}.badge{background:#181818;color:#fff;border-radius:999px;min-width:24px;height:24px;display:grid;place-items:center;font-size:.75rem}.empty{padding:24px 4px;color:#77756c}.condition-card{display:flex;align-items:center;gap:14px}.condition-card .mark{font-size:1.6rem}.condition-card p{margin:2px 0 0;color:#68675f;font-size:.9rem}.route{margin-left:auto;text-transform:uppercase;font-size:.68rem;font-weight:800;letter-spacing:.08em}dialog{border:0;border-radius:20px;padding:22px;width:min(620px,calc(100% - 24px));background:#faf9f5;box-shadow:0 24px 80px rgba(0,0,0,.25)}dialog::backdrop{background:rgba(0,0,0,.45)}.panel-head{display:flex;justify-content:space-between;gap:20px}.close{border:0;background:transparent;font-size:2rem;line-height:1;cursor:pointer}.question{margin:32px 0 12px;font-weight:700}.condition-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}.signal{border:2px solid #222;background:#fff;border-radius:16px;min-height:150px;display:grid;place-items:center;align-content:center;gap:8px;cursor:pointer}.signal span{font-size:3rem}.signal strong{letter-spacing:.08em}.signal:active{transform:scale(.98)}@media(max-width:460px){main{padding-top:24px}.condition-grid{grid-template-columns:1fr}.signal{min-height:92px;grid-template-columns:auto auto;gap:16px}.signal span{font-size:2.4rem}}
+:root{
+  font-family:"Trebuchet MS","Aptos","Segoe UI",sans-serif;
+  color:#1d1d19;
+  background:#e9e5d8;
+  --ink:#1d1d19;
+  --muted:#69675e;
+  --paper:#f5f1e6;
+  --paper-deep:#e3ddcd;
+  --rule:#8f897a;
+  --hair:#c8c1b0;
+}
+*{box-sizing:border-box}
+body{
+  margin:0;
+  background:
+    linear-gradient(rgba(255,255,255,.18),rgba(255,255,255,.18)),
+    repeating-linear-gradient(0deg,rgba(35,31,23,.018) 0,rgba(35,31,23,.018) 1px,transparent 1px,transparent 5px),
+    #e9e5d8;
+}
+main{max-width:680px;margin:auto;padding:34px 20px 80px}
+header{margin-bottom:32px;padding-bottom:17px;border-bottom:2px solid var(--ink)}
+.eyebrow{font-size:.69rem;font-weight:900;letter-spacing:.18em;margin:0 0 7px}
+.muted{color:var(--muted);margin:.35rem 0}
+h1,h2{margin:0}
+h1{font-family:Georgia,"Times New Roman",serif;font-size:2.35rem;font-weight:700;letter-spacing:-.035em;line-height:1}
+.stack{display:grid;gap:0}
 
-.domain{margin-top:18px;border-top:2px solid #222;padding-top:16px}.domain-head{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:10px}.domain-head strong{font-size:.78rem;letter-spacing:.14em}.domain-head span{font-size:.78rem;color:#77756c}.park-list{display:grid;gap:12px}.place-card{border:1px solid #d4d1c7;background:#e7e4da;border-radius:14px;padding:14px}.place-name{font-weight:800;margin-bottom:10px}.context-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}.rhythm.context{padding:14px;border-radius:10px;box-shadow:none}.rhythm.context strong{text-transform:uppercase;font-size:.82rem;letter-spacing:.08em}@media(max-width:380px){.context-grid{grid-template-columns:1fr}}
+/* Field rows, not dashboard cards. */
+.rhythm,.condition-card{
+  width:100%;
+  border:0;
+  border-bottom:1px solid var(--rule);
+  background:transparent;
+  border-radius:0;
+  padding:16px 5px 15px;
+  text-align:left;
+  box-shadow:none;
+}
+.rhythm:first-child{border-top:1px solid var(--rule)}
+button.rhythm{font:inherit;color:inherit;cursor:pointer}
+button.rhythm:hover{background:rgba(255,255,255,.22)}
+button.rhythm:focus-visible,.signal:focus-visible,.attention-grid button:focus-visible{outline:2px solid var(--ink);outline-offset:3px}
+.rhythm-row{display:flex;align-items:center;justify-content:space-between;gap:16px}
+.rhythm strong{font-size:1.03rem}
+.status{font-size:1.2rem;min-width:34px;display:grid;place-items:center}
+.conditions{margin-top:44px}
+.section-title{display:flex;align-items:center;gap:10px;margin-bottom:4px;padding-bottom:8px;border-bottom:2px solid var(--ink)}
+.section-title h2{font-family:Georgia,"Times New Roman",serif;font-size:1.2rem}
+.badge{
+  min-width:23px;height:23px;display:grid;place-items:center;
+  border:1px solid var(--ink);border-radius:50%;
+  background:transparent;color:var(--ink);font-size:.72rem;font-weight:800
+}
+.empty{padding:20px 5px;color:#77746a;font-style:italic}
+.condition-card{display:flex;align-items:center;gap:14px}
+.condition-card .mark{display:grid;place-items:center}
+.condition-card p{margin:3px 0 0;color:var(--muted);font-size:.87rem}
+.route{margin-left:auto;text-transform:uppercase;font-size:.66rem;font-weight:900;letter-spacing:.12em}
 
-[hidden]{display:none!important}.back{border:0;background:transparent;padding:4px 0;font:inherit;font-size:.72rem;font-weight:800;letter-spacing:.08em;cursor:pointer}.attention-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}.attention-grid button{min-height:78px;border:2px solid #222;background:#fff;border-radius:14px;font:inherit;font-weight:800;letter-spacing:.08em;cursor:pointer}.attention-grid button:active{transform:scale(.98)}
+/* Stewardship domains read like sections in a field book. */
+.domain{margin-top:28px;padding-top:0;border-top:2px solid var(--ink)}
+.domain-head{display:flex;align-items:baseline;justify-content:space-between;padding:9px 3px 11px;border-bottom:1px solid var(--rule)}
+.domain-head strong{font-size:.72rem;letter-spacing:.18em}
+.domain-head span{font-size:.74rem;color:#77746a;font-style:italic}
+.park-list{display:grid;gap:0}
+.place-card{border:0;border-bottom:1px solid var(--rule);background:transparent;border-radius:0;padding:17px 3px 18px}
+.place-name{font-family:Georgia,"Times New Roman",serif;font-weight:700;font-size:1.08rem;margin-bottom:10px}
+.context-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:9px}
+.rhythm.context{
+  padding:13px 12px;
+  border:1px solid var(--rule);
+  border-radius:2px;
+  background:rgba(245,241,230,.46);
+  box-shadow:none
+}
+.rhythm.context:first-child{border-top:1px solid var(--rule)}
+.rhythm.context:nth-child(2n){transform:translateY(1px)}
+.rhythm.context strong{text-transform:uppercase;font-size:.76rem;letter-spacing:.11em}
+@media(max-width:380px){.context-grid{grid-template-columns:1fr}}
 
-.standard-link{border:0;border-bottom:1px solid #77756c;background:transparent;padding:2px 0;margin-top:8px;color:#68675f;font:inherit;font-size:.68rem;font-weight:800;letter-spacing:.12em;cursor:pointer}.standard-eyebrow{margin-top:28px}.standard-copy{display:grid;gap:12px}.standard-copy p{margin:0;line-height:1.45}.standard-rule{border-top:1px solid #d4d1c7;padding-top:12px;display:grid;gap:4px}.standard-rule strong{font-size:.72rem;letter-spacing:.1em}.standard-rule span{color:#57564f;line-height:1.45}
+/* Witness sheet. */
+dialog{
+  border:1px solid #5d594f;
+  border-radius:3px;
+  padding:24px;
+  width:min(620px,calc(100% - 24px));
+  color:var(--ink);
+  background:
+    repeating-linear-gradient(0deg,rgba(35,31,23,.018) 0,rgba(35,31,23,.018) 1px,transparent 1px,transparent 5px),
+    var(--paper);
+  box-shadow:8px 10px 0 rgba(30,28,22,.16),0 24px 70px rgba(0,0,0,.18)
+}
+dialog::backdrop{background:rgba(30,29,25,.55)}
+.panel-head{display:flex;justify-content:space-between;gap:20px;padding-bottom:15px;border-bottom:1px solid var(--rule)}
+.panel-head h2{font-family:Georgia,"Times New Roman",serif;font-size:1.55rem}
+.close{border:0;background:transparent;color:var(--ink);font-size:2rem;line-height:1;cursor:pointer;padding:0 3px}
+.question{margin:27px 0 12px;font-size:.76rem;font-weight:900;letter-spacing:.08em;text-transform:uppercase}
+.condition-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.signal{
+  border:1.5px solid var(--ink);
+  background:rgba(255,255,255,.28);
+  border-radius:2px;
+  min-height:145px;
+  display:grid;place-items:center;align-content:center;gap:8px;
+  color:var(--ink);cursor:pointer
+}
+.signal:nth-child(1){transform:rotate(-.25deg)}
+.signal:nth-child(2){transform:translateY(1px)}
+.signal:nth-child(3){transform:rotate(.2deg)}
+.signal strong{letter-spacing:.12em;font-size:.76rem}
+.signal:active{transform:translateY(1px)}
+@media(max-width:460px){
+  main{padding:25px 16px 70px}
+  h1{font-size:2.05rem}
+  .condition-grid{grid-template-columns:1fr}
+  .signal{min-height:88px;grid-template-columns:auto auto;gap:18px}
+}
 
-/* Canonical field marks live in /static/symbols. */
-.field-symbol{display:block;width:58px;height:58px;object-fit:contain}.field-symbol.small{width:30px;height:30px}.status .field-symbol{width:32px;height:32px}.signal .field-symbol{margin-bottom:5px}.signal .field-symbol+strong{margin-top:3px}@media(max-width:460px){.signal .field-symbol{width:52px;height:52px;margin:0}}
+[hidden]{display:none!important}
+.back{
+  border:0;border-bottom:1px solid var(--rule);background:transparent;
+  padding:5px 0;font:inherit;font-size:.69rem;font-weight:900;letter-spacing:.1em;cursor:pointer
+}
+.attention-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:9px}
+.attention-grid button{
+  min-height:74px;border:1.5px solid var(--ink);background:rgba(255,255,255,.25);
+  border-radius:2px;color:var(--ink);font:inherit;font-size:.75rem;font-weight:900;letter-spacing:.11em;cursor:pointer
+}
+.attention-grid button:nth-child(odd){transform:rotate(-.15deg)}
+.attention-grid button:active{transform:translateY(1px)}
+.standard-link{
+  border:0;border-bottom:1px solid var(--rule);background:transparent;padding:2px 0;margin-top:8px;
+  color:var(--muted);font:inherit;font-size:.66rem;font-weight:900;letter-spacing:.14em;cursor:pointer
+}
+.standard-eyebrow{margin-top:28px}
+.standard-copy{display:grid;gap:13px}
+.standard-copy p{margin:0;line-height:1.48}
+.standard-rule{border-top:1px solid var(--hair);padding-top:12px;display:grid;gap:4px}
+.standard-rule strong{font-size:.7rem;letter-spacing:.12em}
+.standard-rule span{color:#57564f;line-height:1.48}
+
+/* Canonical field marks are the hand in an otherwise disciplined layout. */
+.field-symbol{display:block;width:58px;height:58px;object-fit:contain}
+.field-symbol.small{width:30px;height:30px}
+.status .field-symbol{width:32px;height:32px}
+.signal .field-symbol{margin-bottom:5px}
+.signal .field-symbol+strong{margin-top:3px}
+@media(max-width:460px){.signal .field-symbol{width:52px;height:52px;margin:0}}
