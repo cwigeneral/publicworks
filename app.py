@@ -20,6 +20,8 @@ class Rhythm(db.Model):
     name = db.Column(db.String(80), nullable=False, unique=True)
     place = db.Column(db.String(120), nullable=False)
     cadence = db.Column(db.String(80), nullable=False, default="daily")
+    domain = db.Column(db.String(80), nullable=False, default="General")
+    context = db.Column(db.String(80), nullable=False, default="General")
 
 
 class Witness(db.Model):
@@ -41,18 +43,39 @@ class Condition(db.Model):
 
 
 SEED_RHYTHMS = [
-    ("Water System", "Water Facilities", "daily"),
-    ("Sewer System", "Sewer Facilities", "daily"),
-    ("Main Street", "Main Street", "regular"),
-    ("Parks", "Town Parks", "regular"),
+    ("Water System", "Water Facilities", "daily", "Water", "System"),
+    ("Sewer System", "Sewer Facilities", "daily", "Sewer", "System"),
+    ("Main Street", "Main Street", "regular", "Public Realm", "General"),
 ]
+
+PARKS = [
+    "Main Street Park",
+    "Kiwanis Park (Library Park)",
+    "Log Cabin (Hamilton) Park",
+    "Sheridan Pool",
+    "Baseball Fields Park",
+]
+
+PARK_CONTEXTS = ["Grounds", "Trash"]
 
 
 def seed():
-    if Rhythm.query.count() == 0:
-        for name, place, cadence in SEED_RHYTHMS:
-            db.session.add(Rhythm(name=name, place=place, cadence=cadence))
-        db.session.commit()
+    for name, place, cadence, domain, context in SEED_RHYTHMS:
+        if not Rhythm.query.filter_by(name=name).first():
+            db.session.add(Rhythm(name=name, place=place, cadence=cadence, domain=domain, context=context))
+
+    for place in PARKS:
+        for context in PARK_CONTEXTS:
+            name = f"{place} — {context}"
+            if not Rhythm.query.filter_by(name=name).first():
+                db.session.add(Rhythm(
+                    name=name,
+                    place=place,
+                    cadence="regular",
+                    domain="Parks",
+                    context=context,
+                ))
+    db.session.commit()
 
 
 @app.get("/")
@@ -74,6 +97,8 @@ def state():
             "name": r.name,
             "place": r.place,
             "cadence": r.cadence,
+            "domain": r.domain,
+            "context": r.context,
             "latest_condition": latest[r.id].condition if r.id in latest else None,
         } for r in rhythms],
         "conditions": [{
