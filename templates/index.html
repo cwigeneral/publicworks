@@ -19,10 +19,24 @@
   <dialog id="panel">
     <div class="panel-head"><div><p class="eyebrow">WITNESS</p><h2 id="panel-title"></h2><p id="panel-place" class="muted"></p></div><button class="close" aria-label="Close">×</button></div>
     <p class="question">What is the condition?</p>
-    <div class="condition-grid">
-      <button data-condition="good" class="signal good"><span>●</span><strong>GOOD</strong></button>
-      <button data-condition="watch" class="signal watch"><span>△</span><strong>WATCH</strong></button>
-      <button data-condition="act" class="signal act"><span>■</span><strong>ACT</strong></button>
+    <div id="condition-step">
+      <div class="condition-grid">
+        <button data-condition="good" class="signal good"><span>●</span><strong>GOOD</strong></button>
+        <button data-condition="watch" class="signal watch"><span>△</span><strong>WATCH</strong></button>
+        <button data-condition="act" class="signal act"><span>■</span><strong>ACT</strong></button>
+      </div>
+    </div>
+    <div id="attention-step" hidden>
+      <button id="attention-back" class="back">← CONDITION</button>
+      <p class="question">What needs attention?</p>
+      <div class="attention-grid">
+        <button data-attention="mow">MOW</button>
+        <button data-attention="weeds">WEEDS</button>
+        <button data-attention="water">WATER</button>
+        <button data-attention="clean">CLEAN</button>
+        <button data-attention="damage">DAMAGE</button>
+        <button data-attention="other">OTHER</button>
+      </div>
     </div>
   </dialog>
 
