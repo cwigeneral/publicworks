@@ -93,6 +93,9 @@ def migrate():
     condition_columns = {column["name"] for column in inspector.get_columns("condition")}
     if "attention" not in condition_columns:
         db.session.execute(text("ALTER TABLE condition ADD COLUMN attention VARCHAR(40)"))
+    work_columns = {column["name"] for column in inspector.get_columns("work_session")}
+    if "attention_id" not in work_columns:
+        db.session.execute(text("ALTER TABLE work_session ADD COLUMN attention_id INTEGER"))
     db.session.commit()
 
 
