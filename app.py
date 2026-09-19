@@ -45,15 +45,27 @@ class Condition(db.Model):
     rhythm = db.relationship("Rhythm")
 
 
+class Attention(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    rhythm_id = db.Column(db.Integer, db.ForeignKey("rhythm.id"), nullable=False)
+    kind = db.Column(db.String(40), nullable=False)
+    response = db.Column(db.String(16))
+    opened_at = db.Column(db.DateTime(timezone=True), nullable=False, default=lambda: datetime.now(timezone.utc))
+    resolved_at = db.Column(db.DateTime(timezone=True))
+    rhythm = db.relationship("Rhythm")
+
+
 class WorkSession(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    condition_id = db.Column(db.Integer, db.ForeignKey("condition.id"), nullable=False)
+    condition_id = db.Column(db.Integer, db.ForeignKey("condition.id"), nullable=True)
+    attention_id = db.Column(db.Integer, db.ForeignKey("attention.id"))
     rhythm_id = db.Column(db.Integer, db.ForeignKey("rhythm.id"), nullable=False)
     attention = db.Column(db.String(40))
     started_at = db.Column(db.DateTime(timezone=True), nullable=False, default=lambda: datetime.now(timezone.utc))
     ended_at = db.Column(db.DateTime(timezone=True))
     result = db.Column(db.String(16))
     condition = db.relationship("Condition")
+    attention_record = db.relationship("Attention")
     rhythm = db.relationship("Rhythm")
 
 
@@ -112,7 +124,7 @@ def state():
     return jsonify({
         "rhythms": [{"id": r.id, "name": r.name, "place": r.place, "cadence": r.cadence, "domain": r.domain, "context": r.context, "latest_condition": latest[r.id].condition if r.id in latest else None} for r in rhythms],
         "conditions": [{"id": c.id, "rhythm_id": c.rhythm_id, "name": c.rhythm.name, "place": c.rhythm.place, "state": c.state, "route": c.route, "attention": c.attention, "work_session_id": next((w.id for w in work if w.condition_id == c.id), None)} for c in active],
-        "work": [{"id": w.id, "condition_id": w.condition_id, "rhythm_id": w.rhythm_id, "place": w.rhythm.place, "context": w.rhythm.context, "attention": w.attention, "started_at": w.started_at.isoformat()} for w in work],
+        "work": [{"id": w.id, "condition_id": w.condition_id, "attention_id": w.attention_id, "rhythm_id": w.rhythm_id, "place": w.rhythm.place, "context": w.rhythm.context, "attention": w.attention, "started_at": w.started_at.isoformat()} for w in work],
     })
 
 
@@ -143,7 +155,50 @@ def witness():
             db.session.add(Condition(rhythm_id=rhythm.id, state=state, route=route, attention=attention))
     db.session.commit()
     active = Condition.query.filter_by(rhythm_id=rhythm.id, resolved_at=None).first()
-    return jsonify({"ok": True, "condition_id": active.id if active else None})
+    attention_record = None
+    if state == "act" and attention:
+        attention_record = Attention(rhythm_id=rhythm.id, kind=attention)
+        db.session.add(attention_record)
+        db.session.commit()
+    return jsonify({"ok": True, "condition_id": active.id if active else None, "attention_id": attention_record.id if attention_record else None})
+
+
+@app.post("/api/attentions/<int:attention_id>/respond")
+def respond_attention(attention_id):
+    payload = request.get_json(force=True)
+    response = payload.get("response")
+    if response not in {"handled", "start", "route"}:
+        return jsonify({"error": "invalid response"}), 400
+    attention = db.session.get(Attention, attention_id)
+    if not attention or attention.resolved_at is not None:
+        return jsonify({"error": "attention not active"}), 404
+    attention.response = response
+    if response == "handled":
+        attention.resolved_at = datetime.now(timezone.utc)
+    elif response == "start":
+        condition = Condition.query.filter_by(rhythm_id=attention.rhythm_id, resolved_at=None).first()
+        work = WorkSession(condition_id=condition.id if condition else None, attention_id=attention.id, rhythm_id=attention.rhythm_id, attention=attention.kind)
+        db.session.add(work)
+        if condition:
+            condition.route = "now"
+    db.session.commit()
+    return jsonify({"ok": True})
+
+
+@app.post("/api/rhythms/<int:rhythm_id>/complete-witness")
+def complete_witness(rhythm_id):
+    rhythm = db.session.get(Rhythm, rhythm_id)
+    if not rhythm:
+        return jsonify({"error": "rhythm not found"}), 404
+    unresolved = Attention.query.filter_by(rhythm_id=rhythm_id, resolved_at=None).count()
+    active = Condition.query.filter_by(rhythm_id=rhythm_id, resolved_at=None).first()
+    if unresolved == 0:
+        db.session.add(Witness(rhythm_id=rhythm_id, condition="good"))
+        if active:
+            active.state = "resolved"
+            active.resolved_at = datetime.now(timezone.utc)
+    db.session.commit()
+    return jsonify({"ok": True, "balanced": unresolved == 0})
 
 
 @app.post("/api/conditions/<int:condition_id>/handled")
@@ -182,15 +237,24 @@ def finish_work(work_id):
     if not work or work.ended_at is not None:
         return jsonify({"error": "work session not active"}), 404
     condition = work.condition
+    attention_record = work.attention_record
     work.ended_at = datetime.now(timezone.utc)
     work.result = result
     db.session.add(Witness(rhythm_id=work.rhythm_id, condition=result, attention=work.attention if result == "act" else None))
-    if result == "good":
-        condition.state = "resolved"
-        condition.resolved_at = datetime.now(timezone.utc)
-    else:
-        condition.state = result
-        condition.route = "watch" if result == "watch" else "today"
+    if attention_record and result == "good":
+        attention_record.resolved_at = datetime.now(timezone.utc)
+    if condition:
+        if result == "good":
+            unresolved = Attention.query.filter_by(rhythm_id=work.rhythm_id, resolved_at=None).count()
+            if unresolved == 0:
+                condition.state = "resolved"
+                condition.resolved_at = datetime.now(timezone.utc)
+            else:
+                condition.state = "act"
+                condition.route = "today"
+        else:
+            condition.state = result
+            condition.route = "watch" if result == "watch" else "today"
     db.session.commit()
     return jsonify({"ok": True})
 
