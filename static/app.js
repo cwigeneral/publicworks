@@ -9,10 +9,11 @@ async function load(){
   const parksHtml=parkPlaces.length?`<div class="domain"><div class="domain-head"><strong>PARKS</strong><span>Witness by place</span></div><div class="park-list">${parkPlaces.map(place=>{const items=parks.filter(r=>r.place===place);return `<div class="place-card"><div class="place-name">${place}</div><div class="context-grid">${items.map(r=>rhythmButton(r,true)).join("")}</div></div>`;}).join("")}</div></div>`:"";
   rhythmsEl.innerHTML=ordinaryHtml+parksHtml;
   countEl.textContent=data.conditions.length;
-  conditionsEl.innerHTML=data.conditions.length?data.conditions.map(c=>`<div class="condition-card"><span class="mark">${c.state==="act"?"■":"△"}</span><div><strong>${c.name}</strong><p>${c.attention?attentionLabel(c.attention)+" · ":""}${c.place}</p></div><span class="route">${c.route}</span></div>`).join(""):`<div class="empty">No active conditions. The rhythm continues.</div>`;
+  conditionsEl.innerHTML=data.conditions.length?data.conditions.map(c=>`<div class="condition-card"><span class="mark">${fieldMark(c.state)}</span><div><strong>${c.name}</strong><p>${c.attention?attentionLabel(c.attention)+" · ":""}${c.place}</p></div><span class="route">${c.route}</span></div>`).join(""):`<div class="empty">No active conditions. The rhythm continues.</div>`;
 }
 function rhythmButton(r,compact=false){const label=compact?r.context:r.name;const sub=compact?"":`<div class="muted">${r.place}</div>`;return `<button class="rhythm ${compact?"context":""}" data-id="${r.id}" data-name="${label}" data-place="${r.place}" data-context="${r.context}" data-domain="${r.domain}"><div class="rhythm-row"><div><strong>${label}</strong>${sub}</div><span class="status">${symbol(r.latest_condition)}</span></div></button>`;}
-function symbol(s){return s==="good"?"●":s==="watch"?"△":s==="act"?"■":"○"}
+function fieldMark(s){return s==="good"?`<span class="field-mark mark-good small"><i></i></span>`:s==="watch"?`<span class="field-mark mark-watch small"><i></i></span>`:s==="act"?`<span class="field-mark mark-act small"><i></i></span>`:"○"}
+function symbol(s){return s?fieldMark(s):"○"}
 function attentionLabel(s){return {mow:"Mow",weeds:"Weeds",water:"Water",clean:"Clean",damage:"Damage",other:"Other"}[s]||s}
 function resetPanel(){conditionStep.hidden=false;attentionStep.hidden=true;standardStep.hidden=true;standardOpen.hidden=!(selectedContext?.domain==="Parks"&&selectedContext?.context==="Grounds")}
 async function submitWitness(condition,attention=null){await fetch("/api/witness",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({rhythm_id:selected,condition,attention})});panel.close();resetPanel();await load()}
