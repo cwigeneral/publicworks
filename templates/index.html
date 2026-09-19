@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <title>Public Works</title>
+  <link rel="stylesheet" href="/static/app.css">
+</head>
+<body>
+  <main>
+    <header><p class="eyebrow">PUBLIC WORKS</p><h1>Today's Rhythm</h1><p class="muted">Witness the condition. Let the condition route the work.</p></header>
+    <section id="rhythms" class="stack"></section>
+    <section class="conditions">
+      <div class="section-title"><h2>Routed Conditions</h2><span id="count" class="badge">0</span></div>
+      <div id="conditions" class="stack"></div>
+    </section>
+  </main>
+
+  <dialog id="panel">
+    <div class="panel-head"><div><p class="eyebrow">WITNESS</p><h2 id="panel-title"></h2><p id="panel-place" class="muted"></p></div><button class="close" aria-label="Close">×</button></div>
+    <p class="question">What is the condition?</p>
+    <div class="condition-grid">
+      <button data-condition="good" class="signal good"><span>●</span><strong>GOOD</strong></button>
+      <button data-condition="watch" class="signal watch"><span>△</span><strong>WATCH</strong></button>
+      <button data-condition="act" class="signal act"><span>■</span><strong>ACT</strong></button>
+    </div>
+  </dialog>
+
+  <script src="/static/app.js"></script>
+</body>
+</html>
