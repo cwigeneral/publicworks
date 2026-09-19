@@ -146,3 +146,6 @@ dialog::backdrop{background:rgba(30,29,25,.55)}
 .signal .field-symbol{margin-bottom:5px}
 .signal .field-symbol+strong{margin-top:3px}
 @media(max-width:460px){.signal .field-symbol{width:52px;height:52px;margin:0}}
+
+/* ACT becomes response, not paperwork. */
+.response-grid{display:grid;gap:9px}.response-grid button,.work-card{width:100%;border:1.5px solid var(--ink);border-radius:2px;background:rgba(255,255,255,.25);color:var(--ink);font:inherit;text-align:left;cursor:pointer}.response-grid button{min-height:76px;padding:13px 15px;display:grid;gap:3px}.response-grid strong{font-size:.78rem;letter-spacing:.1em}.response-grid span{font-size:.8rem;color:var(--muted)}.response-grid button:nth-child(2){transform:translateX(1px)}.response-grid button:active{transform:translateY(1px)}.work-card{border-width:0 0 1px;padding:15px 5px;display:flex;align-items:center;gap:14px}.work-card:first-child{border-top:1px solid var(--rule)}.work-card p{margin:3px 0 0;color:var(--muted);font-size:.87rem}.work-mark{font-size:1.15rem;min-width:30px;text-align:center}
