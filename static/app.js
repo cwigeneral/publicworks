@@ -1,4 +1,4 @@
-const rhythmsEl=document.querySelector("#rhythms");const conditionsEl=document.querySelector("#conditions");const countEl=document.querySelector("#count");const panel=document.querySelector("#panel");const conditionStep=document.querySelector("#condition-step");const attentionStep=document.querySelector("#attention-step");let selected=null;let selectedContext=null;
+const rhythmsEl=document.querySelector("#rhythms");const conditionsEl=document.querySelector("#conditions");const countEl=document.querySelector("#count");const panel=document.querySelector("#panel");const conditionStep=document.querySelector("#condition-step");const attentionStep=document.querySelector("#attention-step");const standardStep=document.querySelector("#standard-step");const standardOpen=document.querySelector("#standard-open");let selected=null;let selectedContext=null;
 
 async function load(){
   const data=await fetch("/api/state").then(r=>r.json());
@@ -14,10 +14,12 @@ async function load(){
 function rhythmButton(r,compact=false){const label=compact?r.context:r.name;const sub=compact?"":`<div class="muted">${r.place}</div>`;return `<button class="rhythm ${compact?"context":""}" data-id="${r.id}" data-name="${label}" data-place="${r.place}" data-context="${r.context}" data-domain="${r.domain}"><div class="rhythm-row"><div><strong>${label}</strong>${sub}</div><span class="status">${symbol(r.latest_condition)}</span></div></button>`;}
 function symbol(s){return s==="good"?"●":s==="watch"?"△":s==="act"?"■":"○"}
 function attentionLabel(s){return {mow:"Mow",weeds:"Weeds",water:"Water",clean:"Clean",damage:"Damage",other:"Other"}[s]||s}
-function resetPanel(){conditionStep.hidden=false;attentionStep.hidden=true}
+function resetPanel(){conditionStep.hidden=false;attentionStep.hidden=true;standardStep.hidden=true;standardOpen.hidden=!(selectedContext?.domain==="Parks"&&selectedContext?.context==="Grounds")}
 async function submitWitness(condition,attention=null){await fetch("/api/witness",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({rhythm_id:selected,condition,attention})});panel.close();resetPanel();await load()}
 rhythmsEl.addEventListener("click",e=>{const b=e.target.closest(".rhythm");if(!b)return;selected=Number(b.dataset.id);selectedContext={domain:b.dataset.domain,context:b.dataset.context};document.querySelector("#panel-title").textContent=b.dataset.name;document.querySelector("#panel-place").textContent=b.dataset.place;resetPanel();panel.showModal()});
 document.querySelector(".close").addEventListener("click",()=>{panel.close();resetPanel()});
+standardOpen.addEventListener("click",()=>{conditionStep.hidden=true;attentionStep.hidden=true;standardStep.hidden=false;standardOpen.hidden=true});
+document.querySelector("#standard-back").addEventListener("click",resetPanel);
 document.querySelector(".condition-grid").addEventListener("click",async e=>{const b=e.target.closest("[data-condition]");if(!b||!selected)return;const condition=b.dataset.condition;if(condition==="act"&&selectedContext?.domain==="Parks"&&selectedContext?.context==="Grounds"){conditionStep.hidden=true;attentionStep.hidden=false;return;}b.disabled=true;await submitWitness(condition);b.disabled=false});
 document.querySelector("#attention-back").addEventListener("click",resetPanel);
 document.querySelector(".attention-grid").addEventListener("click",async e=>{const b=e.target.closest("[data-attention]");if(!b||!selected)return;b.disabled=true;await submitWitness("act",b.dataset.attention);b.disabled=false});
