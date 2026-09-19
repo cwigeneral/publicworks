@@ -7,7 +7,9 @@ from flask_sqlalchemy import SQLAlchemy
 app = Flask(__name__)
 database_url = os.getenv("DATABASE_URL", "sqlite:///publicworks.db")
 if database_url.startswith("postgres://"):
-    database_url = database_url.replace("postgres://", "postgresql+psycopg://", 1)\nif database_url.startswith("postgresql://"):\n    database_url = database_url.replace("postgresql://", "postgresql+psycopg://", 1)
+    database_url = database_url.replace("postgres://", "postgresql+psycopg://", 1)
+if database_url.startswith("postgresql://"):
+    database_url = database_url.replace("postgresql://", "postgresql+psycopg://", 1)
 app.config["SQLALCHEMY_DATABASE_URI"] = database_url
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 db = SQLAlchemy(app)
